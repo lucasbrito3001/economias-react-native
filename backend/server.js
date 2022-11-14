@@ -1,14 +1,26 @@
-import { app } from './src/app.js'
-import config from './src/config/config.json' assert { type: "json" }
+import { app } from './src/core/app.js'
+import { database } from './src/core/database.js'
+import { readFileSync } from 'fs'
 
-import dotenv from 'dotenv'
+const configJson = readFileSync('./src/config/config.json')
+const config = JSON.parse(configJson)
 
-dotenv.config()
-
-const configEnv = config[process.env.SERVER_ENV]
+const configEnv = config[process.env.NODE_ENV]
 
 const port = configEnv.apiPort
 
 const { startApp, stopApp } = app(port)
+const { startConnection, stopConnection } = database()
 
-startApp()
+async function startServer() {
+    await startConnection()
+    await startApp()
+}
+
+startServer()
+
+process.on('SIGINT', async () => {
+    console.log('\n\n[SYSTEM] Stopping the application...')
+    await stopApp()
+    await stopConnection()
+})

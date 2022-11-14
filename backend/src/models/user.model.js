@@ -1,7 +1,9 @@
-import { Schema, Model } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
-const User = new Schema({
+const userSchema = new Schema({
     name: String,
     login: String,
     password: String
 })
+
+const User = model('User', userSchema)

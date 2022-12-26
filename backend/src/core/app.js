@@ -2,6 +2,9 @@ import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 
+// routes
+import userRoutes from '../routes/user.route.js'
+
 function app(port) {
     const app = express()
     let server = null
@@ -10,11 +13,14 @@ function app(port) {
         console.log('\n[APP] -----------------------')
 
         console.log('> Setting dependencies...')
+        app.use(express.json())
         app.use(morgan('dev'))
         app.use(cors())
 
+        app.use('/user', userRoutes)
+
         console.log('> Starting server...')
-        server = app.listen(port, () => console.log(`> Done! The app is running on port: ${port}`))
+        server = app.listen(port, () => console.log(`> Done! The app is running on port: ${port}\n`))
     }
     
     async function stopApp() {

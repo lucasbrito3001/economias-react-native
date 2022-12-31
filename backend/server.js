@@ -5,7 +5,8 @@ import { readFileSync } from 'fs'
 const configJson = readFileSync('./src/config/config.json')
 const config = JSON.parse(configJson)
 
-const configEnv = config[process.env.NODE_ENV]
+// const configEnv = config[process.env.NODE_ENV]
+const configEnv = config['development']
 
 const port = configEnv.apiPort
 

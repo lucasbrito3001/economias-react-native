@@ -1,6 +1,3 @@
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-
 import User from '../models/user.model.js'
 import { hashString, compareString, generateToken } from '../services/util.service.js'
 
@@ -8,9 +5,9 @@ const responseUnexpected = { status: false, error: 'Unexpected error, contact th
 
 export async function createUser(req, res, next) {
     try {
-        const { name, email, password } = req.body
+        const { name, email, password, type } = req.body
 
-        const { status: statusHash, hash: hashedPassword } = await hashString(bcrypt, password)
+        const { status: statusHash, hash: hashedPassword } = await hashString(password)
 
         if(!statusHash) return res.status(450).json(responseUnexpected)
 
@@ -19,7 +16,7 @@ export async function createUser(req, res, next) {
                 password: pass,
                 ...user
             }
-        } = await User.create({ name, email, password: hashedPassword })
+        } = await User.create({ name, email, password: hashedPassword, type })
 
         return res.status(201).json({ status: true, user })
     } catch (error) {
@@ -35,12 +32,12 @@ export async function loginUser(req, res, next) {
     try {
         const { email, password } = req.body
 
-        const { password: hashedPassword } = await User.findOne({ email }).select('+password')
-        const { status: statusHash } = await compareString(bcrypt, password, hashedPassword)
+        const { _id: id, type, password: hashedPassword } = await User.findOne({ email }).select('+password')
+        const { status: statusHash } = await compareString(password, hashedPassword)
         
         if(!statusHash) return res.status(450).json(responseUnexpected)
 
-        const { status: statusJwt, token } = generateToken(jwt, { email })
+        const { status: statusJwt, token } = generateToken({ email, id, type })
         
         if(!statusJwt) return res.status(450).json(responseUnexpected)
 

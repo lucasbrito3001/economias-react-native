@@ -3,7 +3,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 
 // routes
-import { userRoutes } from '../routes/index.js'
+import { userRoutes, recordRoutes } from '../routes/index.js'
 
 function app(port) {
     const app = express()
@@ -18,9 +18,10 @@ function app(port) {
         app.use(cors())
 
         app.use('/user', userRoutes)
+        app.use('/record', recordRoutes)
 
         app.get('/', (req, res) => {
-            res.status(200).json({
+            return res.status(200).json({
                 status: true,
                 message: "Hello world, welcome to the SempreVerde API!"
             })

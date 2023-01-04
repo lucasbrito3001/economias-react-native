@@ -1,15 +1,13 @@
 import RecordModel from '../models/record.model.js'
-import { hashString, compareString, generateToken } from '../services/util.service.js'
 
-const responseUnexpected = { status: false, error: 'Unexpected error, contact the administrator' }
-
-export async function upsertRecord(req, res, next) {
+export async function createOne(req, res, next) {
     try {
         const { year, month, day, description, value, observation } = req.body
+        const { id } = req.user
 
-        const recordByMonth = RecordModel.find({ month })
+        const record = await RecordModel.create({ idUser: id, year, month, day, description, value, observation })
 
-        return res.status(201).json({ status: true, user })
+        return res.status(201).json({ status: true, record })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ 
@@ -21,7 +19,11 @@ export async function upsertRecord(req, res, next) {
 
 export async function readAll(req, res, next) {
     try {
-        const users = await RecordModel.find()
+        const { id, type } = req.user
+
+        const users = await RecordModel.find({ 
+            ...(type !== 'admin' && { idUser: id })
+        })
 
         return res.status(200).json({ status: true, content: users })
     } catch (error) {
@@ -35,11 +37,14 @@ export async function readAll(req, res, next) {
 
 export async function readOne(req, res, next) {
     try {
-        const { id } = req.params
+        const { id, type } = req.user
 
-        const user = await User.findById(id)
+        const record = await RecordModel.findOne({
+            id, 
+            ...(type !== 'admin' && { idUser: id })
+        })
 
-        return res.status(200).json({ status: true, content: user })
+        return res.status(200).json({ status: !!record, content: record || {} })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ 
@@ -49,3 +54,6 @@ export async function readOne(req, res, next) {
     }
 }
 
+export async function updateOne(req, res, next) {
+
+}

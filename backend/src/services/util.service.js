@@ -1,5 +1,7 @@
 import { readFileSync } from 'fs'
 import dotenv from 'dotenv'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 dotenv.config()
 
@@ -10,7 +12,7 @@ const {
     jwtSecret
 } = config[process.env.NODE_ENV]
 
-export async function hashString(library, string) {
+export async function hashString(string, library = bcrypt) {
     try {
         const saltRounds = 10
         const hash = await library.hash(string, saltRounds)
@@ -28,7 +30,7 @@ export async function hashString(library, string) {
     }
 }
 
-export async function compareString(library, string, hash) {
+export async function compareString(string, hash, library = bcrypt) {
     try {
         const result = await library.compare(string, hash)
 
@@ -44,7 +46,7 @@ export async function compareString(library, string, hash) {
     }
 }
 
-export function generateToken(library, infosToSave, secret = jwtSecret) {
+export function generateToken(infosToSave, library = jwt, secret = jwtSecret) {
     try {
         const token = library.sign(
             infosToSave,
@@ -65,7 +67,7 @@ export function generateToken(library, infosToSave, secret = jwtSecret) {
     }
 }
 
-export function checkValidToken(library, token, secret = jwtSecret) {
+export function checkValidToken(token, library = jwt, secret = jwtSecret) {
     try {
         const tokenReplaced = token.replace('Bearer ', '')
 

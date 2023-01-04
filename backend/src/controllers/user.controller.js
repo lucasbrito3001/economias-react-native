@@ -1,30 +1,86 @@
-import User from '../models/user.model.js'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
-export async function readAll(req, res, _next) {
+import User from '../models/user.model.js'
+import { hashString, compareString, generateToken } from '../services/util.service.js'
+
+const responseUnexpected = { status: false, error: 'Unexpected error, contact the administrator' }
+
+export async function createUser(req, res, next) {
+    try {
+        const { name, email, password } = req.body
+
+        const { status: statusHash, hash: hashedPassword } = await hashString(bcrypt, password)
+
+        if(!statusHash) return res.status(450).json(responseUnexpected)
+
+        const {
+            _doc: {
+                password: pass,
+                ...user
+            }
+        } = await User.create({ name, email, password: hashedPassword })
+
+        return res.status(201).json({ status: true, user })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ 
+            status: false,
+            error
+        })
+    }
+}
+
+export async function loginUser(req, res, next) {
+    try {
+        const { email, password } = req.body
+
+        const { password: hashedPassword } = await User.findOne({ email }).select('+password')
+        const { status: statusHash } = await compareString(bcrypt, password, hashedPassword)
+        
+        if(!statusHash) return res.status(450).json(responseUnexpected)
+
+        const { status: statusJwt, token } = generateToken(jwt, { email })
+        
+        if(!statusJwt) return res.status(450).json(responseUnexpected)
+
+        return res.status(200).json({ status: true, token })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ 
+            status: false,
+            error
+        })
+    }
+}
+
+export async function readAll(req, res, next) {
     try {
         const users = await User.find()
-    
-        res.body = { statusCode: 200, status: true, content: users, message: 'ok' }
 
-        res.status(200).send(users)
+        return res.status(200).json({ status: true, content: users })
     } catch (error) {
-        res.send(500).status()    
+        console.log(error)
+        return res.status(500).json({ 
+            status: false,
+            error
+        })
     }
-
 }
 
-export async function readById(req, res, _next) {
-    return await User.findById('123')
+export async function readOne(req, res, next) {
+    try {
+        const { id } = req.params
+
+        const user = await User.findById(id)
+
+        return res.status(200).json({ status: true, content: user })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ 
+            status: false,
+            error
+        })
+    }
 }
 
-export function createOne(req, res, _next) {
-
-}
-
-export function updateOne(req, res, _next) {
-
-}
-
-export function deleteOne(req, res, _next) {
-    
-}

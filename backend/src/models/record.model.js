@@ -15,4 +15,4 @@ const recordSchema = new Schema({
 
 const Record = model("User", recordSchema);
 
-export { Record };
+export default Record;

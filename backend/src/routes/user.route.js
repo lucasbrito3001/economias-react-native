@@ -1,8 +1,18 @@
-import { Router } from 'express'
-import { readAll } from '../controllers/user.controller.js'
+import express from 'express'
+const { Router } = express
 
-const router = Router()
+import { createUser, loginUser, readAll } from '../controllers/user.controller.js'
 
-router.get('/', readAll)
+import { findUserMiddleware, userLoggedMiddleware } from '../middlewares/user.middleware.js'
 
-export default router
+const routes = Router()
+
+routes.post("/login", loginUser)
+routes.post("/register", createUser)
+
+routes.use(userLoggedMiddleware)
+
+routes.post("/", findUserMiddleware, createUser)
+routes.get("/", readAll)
+
+export default routes

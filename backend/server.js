@@ -2,7 +2,7 @@ import { app } from './src/core/app.js'
 import { database } from './src/core/database.js'
 import { readFileSync } from 'fs'
 
-const configJson = readFileSync('./src/config/config.json')
+const configJson = readFileSync('./src/configs/config.json')
 const config = JSON.parse(configJson)
 
 // const configEnv = config[process.env.NODE_ENV]

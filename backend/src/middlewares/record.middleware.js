@@ -1,0 +1,1 @@
+import RecordModel from '../models/record.model.js'

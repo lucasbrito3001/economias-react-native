@@ -5,6 +5,8 @@ import { Dimensions } from "react-native";
 
 var width = Dimensions.get('window').width;
 
+import { createUser } from "../services/user.service"
+
 // Components
 import { LabelInput } from "../components/shared/index"
 
@@ -17,6 +19,11 @@ export default function Register({ navigation }) {
 
     function openLoginScreen() {
         navigation.navigate('Login')
+    }
+
+    async function registerUser() {
+        const result = await createUser({ name, email, password })
+        if(!result.status) console.log(result)
     }
 
     useEffect(() => {
@@ -74,7 +81,7 @@ export default function Register({ navigation }) {
                         isSecret={true}
                     />
                     <View style={{ marginTop: 24, alignSelf: 'stretch' }}>
-                        <Button disabled={isFormContentOk} title="Cadastrar" color={styles.loginColor} />
+                        <Button onPress={registerUser} disabled={isFormContentOk} title="Cadastrar" color={styles.loginColor} />
                     </View>
                     <View>
                         <Text onPress={openLoginScreen} style={styles.registerLink}>Já tem uma conta? Faça login</Text>

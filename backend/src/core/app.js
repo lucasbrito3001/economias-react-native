@@ -16,6 +16,10 @@ function app(port) {
         app.use(express.json())
         app.use(morgan('dev'))
         app.use(cors())
+        app.use((req, res, next) => {
+            res.setHeader("Access-Control-Allow-Origin", "*")
+            next()
+        })
 
         app.use('/user', userRoutes)
         app.use('/record', recordRoutes)

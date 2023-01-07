@@ -1,7 +1,7 @@
 import User from '../models/user.model.js'
 import { hashString, compareString, generateToken } from '../services/util.service.js'
 
-const responseUnexpected = { status: false, error: 'Unexpected error, contact the administrator' }
+const responseUnexpected = { status: false, error: 'Erro inesperado, entre em contato com o administrador' }
 
 export async function createUser(req, res, next) {
     try {

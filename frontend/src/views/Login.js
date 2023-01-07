@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, KeyboardAvoidingView, ScrollView, TextInput, Bu
 
 import { Dimensions } from "react-native";
 
+import { createUser } from "../services/user.service"
+
 var width = Dimensions.get('window').width;
 
 export default function Login({ navigation }) {
@@ -11,6 +13,10 @@ export default function Login({ navigation }) {
 
     function openRegisterScreen() {
         navigation.navigate('Register')
+    }
+
+    function loginUser() {
+
     }
 
     return (
@@ -38,7 +44,7 @@ export default function Login({ navigation }) {
                     />
                 </View>
                 <View style={{ marginTop: 24 }}>
-                    <Button title="Entrar" color={styles.loginColor} />
+                    <Button onPress={loginUser} title="Entrar" color={styles.loginColor} />
                 </View>
                 <View>
                     <Text onPress={openRegisterScreen} style={styles.registerLink}>Novo no app? Cadastre-se</Text>

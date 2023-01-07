@@ -68,15 +68,15 @@ export async function updateOne(req, res, next) {
             ...(type !== 'admin' && { idUser })
         }, record)
 
-        if(updatedRecord.matchedCount === 0) return res.status(404).json({ status: false, error: 'Record not found' })
-        if(updatedRecord.modifiedCount === 0) return res.status(404).json({ status: false, error: 'Record found, but not updated' })
+        if(updatedRecord.matchedCount === 0) return res.status(404).json({ status: false, error: 'Registro não encontrado' })
+        if(updatedRecord.modifiedCount === 0) return res.status(404).json({ status: false, error: 'Registro encontrado, mas não houveram mudanças' })
         
-        return res.status(200).json({ status: !!updatedRecord, content: 'Record updated succesfully' || {} })
+        return res.status(200).json({ status: !!updatedRecord, content: 'Registro atualizado com sucesso' || {} })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ 
             status: false,
-            error: 'Internal server error, contact the administrator'
+            error: 'Erro interno do servidor, entrar em contato com o administrador'
         })
     }
 }
@@ -91,9 +91,9 @@ export async function deleteOne(req, res, next) {
             ...(type !== 'admin' && { idUser })
         })
 
-        if(deletedRecord.deletedCount === 0) return res.status(404).json({ status: false, error: 'Record not found' })
+        if(deletedRecord.deletedCount === 0) return res.status(404).json({ status: false, error: 'Registro não encontrado' })
         
-        return res.status(200).json({ status: !!deletedRecord, content: 'Record deleted succesfully' || {} })
+        return res.status(200).json({ status: !!deletedRecord, content: 'Registro deletado com sucesso' || {} })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ 

@@ -9,7 +9,7 @@ export async function findUserMiddleware(req, res, next) {
 
         if(user) return res.status(400).json({
             status: false,
-            error: 'This email already exists'
+            error: 'Email já existente no sistema, verifique e tente novamente.'
         })
 
         next()
@@ -30,7 +30,7 @@ export function userLoggedMiddleware(req, res, next) {
 
         if(!statusDecoded) return res.status(401).json({
             status: false,
-            error: 'User unauthorized, please log in and try again'
+            error: 'Usuário não autenticado, por favor refaça o login e tente novamente.'
         })
 
         req.user = decodedInfos

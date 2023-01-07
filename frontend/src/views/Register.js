@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, KeyboardAvoidingView, ScrollView, Button } from "react-native";
+import { StyleSheet, Text, View, ToastAndroid, ScrollView, Button } from "react-native";
 
 import { Dimensions } from "react-native";
 
@@ -23,7 +23,26 @@ export default function Register({ navigation }) {
 
     async function registerUser() {
         const result = await createUser({ name, email, password })
-        if(!result.status) console.log(result)
+
+        if (!result.status) return ToastAndroid.showWithGravityAndOffset(
+            result.error,
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+        );
+
+        ToastAndroid.showWithGravityAndOffset(
+            'Registrado com sucesso, você será redirecionado para a tela de login...',
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+        );
+
+        setTimeout(() => {
+            return navigation.navigate('Login')
+        }, 2000)
     }
 
     useEffect(() => {

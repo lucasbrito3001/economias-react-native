@@ -1,11 +1,11 @@
 import RecordModel from '../models/record.model.js'
 
-export async function createOne(req, res, next) {
+export async function createOne(req, res, next, model = RecordModel) {
     try {
         const { year, month, day, description, value, observation } = req.body
         const { id } = req.user
 
-        const record = await RecordModel.create({ idUser: id, year, month, day, description, value, observation })
+        const record = await model.create({ idUser: id, year, month, day, description, value, observation })
 
         return res.status(201).json({ status: true, record })
     } catch (error) {
@@ -17,11 +17,11 @@ export async function createOne(req, res, next) {
     }
 }
 
-export async function readAll(req, res, next) {
+export async function readAll(req, res, next, model = RecordModel) {
     try {
         const { id, type } = req.user
 
-        const users = await RecordModel.find({ 
+        const users = await model.find({ 
             ...(type !== 'admin' && { idUser: id })
         })
 
@@ -35,12 +35,12 @@ export async function readAll(req, res, next) {
     }
 }
 
-export async function readOne(req, res, next) {
+export async function readOne(req, res, next, model = RecordModel) {
     try {
         const { id: idUser, type } = req.user
         const { id } = req.params
 
-        const record = await RecordModel.findOne({
+        const record = await model.findOne({
             _id: id,
             ...(type !== 'admin' && { idUser })
         })
@@ -55,7 +55,7 @@ export async function readOne(req, res, next) {
     }
 }
 
-export async function updateOne(req, res, next) {
+export async function updateOne(req, res, next, model = RecordModel) {
     try {
         const { id: idUser, type } = req.user
         const { id } = req.params
@@ -63,7 +63,7 @@ export async function updateOne(req, res, next) {
         
         console.log(id, record)
 
-        const updatedRecord = await RecordModel.updateOne({
+        const updatedRecord = await model.updateOne({
             _id: id, 
             ...(type !== 'admin' && { idUser })
         }, record)
@@ -81,12 +81,12 @@ export async function updateOne(req, res, next) {
     }
 }
 
-export async function deleteOne(req, res, next) {
+export async function deleteOne(req, res, next, model = RecordModel) {
     try {
         const { id: idUser, type } = req.user
         const { id } = req.params
 
-        const deletedRecord = await RecordModel.deleteOne({
+        const deletedRecord = await model.deleteOne({
             _id: id, 
             ...(type !== 'admin' && { idUser })
         })

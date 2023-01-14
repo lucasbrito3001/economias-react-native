@@ -1,15 +1,17 @@
 import axios from 'axios'
 import { baseURL } from '../../env'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { getToken } from './util.service'
 
 const httpClient = async () => {
-    const loginToken = await AsyncStorage.getItem('JWT')
+    const loginToken = await getToken()
 
     return axios.create({
         baseURL,
-        Authorization: loginToken || '',
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        headers: {
+            Authorization: loginToken || '',
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        }
     })
 } 
 

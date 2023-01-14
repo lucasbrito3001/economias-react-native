@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, KeyboardAvoidingView, ScrollView, TextInput, Button } from "react-native";
+import { StyleSheet, Text, View, ToastAndroid, ScrollView, TextInput, Button } from "react-native";
 
 import { Dimensions } from "react-native";
 
-import { createUser } from "../services/user.service"
+import { login } from "../services/user.service"
+import { storeToken, storeId } from "../services/util.service"
+import GeneralButton from "../components/shared/Button";
+import LabelInput from "../components/shared/LabelInput"
 
 var width = Dimensions.get('window').width;
 
@@ -15,12 +18,28 @@ export default function Login({ navigation }) {
         navigation.navigate('Register')
     }
 
-    function loginUser() {
+    function openHomeScreen() {
+        navigation.navigate('Dashboard')
+    }
 
+    async function loginUser() {
+        const result = await login({ email, password })
+
+        if (!result.status) return ToastAndroid.showWithGravityAndOffset(
+            result.error || 'Erro ao logar',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+        )
+
+        await storeToken(result.token)
+        await storeId(result.id)
+        return openHomeScreen()
     }
 
     return (
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <View style={styles.container}>
                 <Text style={styles.sempreVerdeSubtitle}>É hora de deixar suas finanças</Text>
                 <Text style={styles.sempreVerdeTitle}>SempreVerde</Text>
@@ -34,28 +53,30 @@ export default function Login({ navigation }) {
                     />
                 </View>
                 <View style={styles.inputView}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Senha</Text>
-                    <TextInput
-                        style={styles.input}
+                    <LabelInput
+                        label="Nome"
                         value={password}
-                        onChangeText={text => setPassword(text)}
-                        secureTextEntry={true}
-                        placeholder="Insira sua senha"
+                        setValue={setPassword}
+                        placeholder="Insira seu nome (pode ser só o primeiro)"
+                        isSecret={true}
                     />
                 </View>
                 <View style={{ marginTop: 24 }}>
-                    <Button onPress={loginUser} title="Entrar" color={styles.loginColor} />
-                </View>
-                <View>
-                    <Text onPress={openRegisterScreen} style={styles.registerLink}>Novo no app? Cadastre-se</Text>
+                    <GeneralButton
+                        press={loginUser}
+                        text="ENTRAR"
+                        buttonFooterText="Novo no app? Cadastre-se"
+                        bgColor={loginColor}
+                    />
                 </View>
             </View>
         </ScrollView>
     );
 }
 
+const loginColor = "#13B855"
+
 const styles = StyleSheet.create({
-    loginColor: "#13B855",
     container: {
         flex: 1,
         justifyContent: 'center'
@@ -73,6 +94,7 @@ const styles = StyleSheet.create({
     registerLink: {
         textAlign: 'center',
         marginTop: 16,
+        fontSize: 16,
         color: '#13B855',
     },
     sempreVerdeTitle: {
@@ -83,7 +105,7 @@ const styles = StyleSheet.create({
         marginBottom: 24
     },
     sempreVerdeSubtitle: {
-        fontSize: 20,
+        fontSize: 24,
         textAlign: 'center',
     }
 })

@@ -32,7 +32,11 @@ export async function loginUser(req, res, next) {
     try {
         const { email, password } = req.body
 
-        const { _id: id, type, password: hashedPassword } = await User.findOne({ email }).select('+password')
+        const user = await User.findOne({ email }).select('+password')
+
+        if(!user) return res.status(200).json({ status: false, error: 'Credenciais incorretas, verifique e tente novamente' })
+
+        const { _id: id, type, password: hashedPassword } = user
         const { status: statusHash } = await compareString(password, hashedPassword)
         
         if(!statusHash) return res.status(450).json(responseUnexpected)
@@ -41,12 +45,12 @@ export async function loginUser(req, res, next) {
         
         if(!statusJwt) return res.status(450).json(responseUnexpected)
 
-        return res.status(200).json({ status: true, token })
+        return res.status(200).json({ status: true, token, id })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ 
             status: false,
-            error
+            error: 'Erro inesperado, entre em contato com um administrador'
         })
     }
 }

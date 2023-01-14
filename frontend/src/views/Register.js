@@ -41,7 +41,7 @@ export default function Register({ navigation }) {
         );
 
         setTimeout(() => {
-            return navigation.navigate('Login')
+            return openLoginScreen()
         }, 2000)
     }
 

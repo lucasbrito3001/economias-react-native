@@ -1,8 +1,11 @@
 import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
 
 // Images
 import HelpingStonks from '../assets/images/helping-stonks.svg'
+
+// Components
+import GeneralButton from '../components/shared/Button'
 
 export default function Home({ navigation }) {
     function openLoginScreen() {
@@ -24,29 +27,23 @@ export default function Home({ navigation }) {
 
             <View>
                 <View style={{ marginTop: 10 }}>
-                    <Button
-                        onPress={openLoginScreen}
-                        title="Entrar"
-                        color={styles.loginColor}
-                    />
+                    <GeneralButton press={openLoginScreen} text="ENTRAR" bgColor={loginColor}/>
                 </View>
                 <View style={{ marginTop: 10 }}>
-                    <Button
-                        onPress={openRegisterScreen}
-                        title="Criar conta"
-                        color={styles.registerColor}
-                    />
+                    <GeneralButton press={openRegisterScreen} text="CRIAR CONTA" bgColor={registerColor}/>
                 </View>
             </View>
         </View>
     );
 }
 
+const registerColor = "#222"
+const loginColor = "#13B855"
+
 const styles = StyleSheet.create({
-    loginColor: "#13B855",
-    registerColor: "#222",
     container: {
         flex: 1,
+        padding: 24,
         justifyContent: "space-between",
         justifyItems: "center"
     },
@@ -57,7 +54,7 @@ const styles = StyleSheet.create({
     },
     title: {
         color: "#000",
-        fontSize: 22,
+        fontSize: 24,
         fontWeight: "bold",
     },
     sempreVerdeText: {
@@ -65,5 +62,11 @@ const styles = StyleSheet.create({
     },
     stonksImage: {
         margin: 'auto'
+    },
+    registerButton: {
+        backgroundColor: registerColor,
+        text: {
+            color: "#fff"
+        }
     }
 });
